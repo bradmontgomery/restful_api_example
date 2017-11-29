@@ -5,7 +5,13 @@ app = Flask(__name__)
 # We'll use this of users as our "database" (this example just stores
 # data in memory). The caveat here is that our data will disappear when
 # the server is stopped.
-USERS = []
+USERS = [
+    {'id': 1, 'name': 'brad', 'email': 'brad@example.com'},
+    {'id': 2, 'name': 'amy', 'email': 'amy@example.com'},
+    {'id': 3, 'name': 'alice', 'email': 'alice@example.com'},
+    {'id': 4, 'name': 'zed', 'email': 'zed@example.com'},
+    {'id': 5, 'name': 'bartholamue', 'email': 'bartholamue@example.com'},
+]
 
 
 @app.route('/api/users/', methods=['GET', 'POST'])
@@ -36,7 +42,7 @@ def user_list():
     return jsonify(content)
 
 
-@app.route('/api/users/<user_id>/', methods=['GET', 'PUT'])
+@app.route('/api/users/<user_id>/', methods=['GET', 'PUT', 'DELETE'])
 def user_detail(user_id):
     """This endpoint gives you details for a single User. It also accepts
     PUT requests in order to update a User.
@@ -51,7 +57,12 @@ def user_detail(user_id):
                 return jsonify(user)
         return jsonify({'error': 'User not found'}), 404
 
-    # TODO: Handle DELETE requests.
+    # Handle DELETE requests.
+    elif request.method == 'DELETE':
+        for user in USERS:
+            if user['id'] == int(user_id):
+                USERS.remove(user)
+                return '', 204
 
     # GET requests
     for user in USERS:
